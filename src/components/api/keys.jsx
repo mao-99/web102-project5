@@ -1,1 +1,1 @@
-export const exchangeRateHost_apiKey = '34466e5628518be6bb9ef58f86c3b7ae   gfgfgfjjjjjjjjhhgghghg';
+export const exchangeRateHost_apiKey = '34466e5628518be6bb9ef58f86c3b7ae   gfgfgfjjjjjjjjhhgghghgggggffffggggffff';
