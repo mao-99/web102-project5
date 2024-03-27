@@ -23,4 +23,4 @@ dist-ssr
 *.sln
 *.sw?
 
-/src/components/api/keys.jsx
+./src/components/api/keys.jsx
