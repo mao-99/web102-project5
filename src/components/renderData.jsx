@@ -1,5 +1,4 @@
 import { fetchData } from "./api/api";
-import axios from "axios";
 import { useState, useEffect } from "react";
 export default function RenderData(){
     const [allCurrencies, setAllCurrencies] = useState([]);
@@ -9,9 +8,10 @@ export default function RenderData(){
             let [data, liveData] = await fetchData();
             const currencies = data.data.currencies;
             const liveRates = liveData.data.quotes;
+            //console.log(liveRates);
             setAllCurrencies(currencies);
             setCurrentRates(liveRates)
-            console.log(currencies);
+            console.log(allCurrencies);
             console.log(currentRates)
         }
         fetchDataAsync();

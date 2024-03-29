@@ -1,0 +1,27 @@
+.currencies{
+    font-size: 1.15rem;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items:flex-start;
+    /* justify-content: space-evenly; */
+}
+.currency{
+    margin: 1rem;
+    width: 124px;
+    background-color: #e9f2f1;
+    border-radius: 8px;
+    color: black;
+    border: 2px solid #ddd5d0;
+    transition: border-color 0.25s;
+}
+.currency:hover, .selected{
+    background-color: #3e323c;
+    color: #e9f2f1;
+    cursor: pointer;
+    border: 3px solid transparent;
+    box-sizing: border-box;
+}
+.currenct:focus{
+    outline: 4px auto transparent;
+}

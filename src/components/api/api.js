@@ -1,4 +1,4 @@
-import { exchangeRateHost_apiKey as apiKey } from "./keys";
+import { exchangeHost_apikey as apiKey } from "../../assets/keys";
 import axios from "axios";
 
 const URL = `http://api.exchangerate.host/list?access_key=${apiKey}`;
