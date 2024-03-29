@@ -9,7 +9,7 @@ export default function Header(){
         //isSelected ? setSelectedCurrencies(selectedCurrencies.filter(curr => curr!== currency)) : setSelectedCurrencies([...selectedCurrencies, currency]);
         if (isSelected){
             let filtered = selectedCurrencies.filter((curr) => curr !== currency);
-            console.log(filtered);
+            //console.log(filtered);
             //setSelectedCurrencies();
         }
         else{

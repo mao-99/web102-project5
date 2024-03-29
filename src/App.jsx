@@ -6,6 +6,7 @@ import './App.css'
 function App() {
   return (
     <>
+    <Header />
     <div className='body'>
       <Index />
       <Table />

@@ -1,18 +1,24 @@
-import { fetchData } from "./api/api";
+import { fetchData, generateDates, fetchHistoricalData } from "./api/api";
 import axios from "axios";
 import { useState, useEffect } from "react";
 export default function Table(){
+    console.log(generateDates(3));
     const [currentRates, setCurrentRates] = useState([])
-    // useEffect(() => {
-    //     const fetchDataAsync = async () => {
-    //         let [data, liveData, hisotoricalData] = await fetchData();
-    //         const liveRates = liveData.data.quotes;
-    //         const historicalRates = hisoticalData.data.quotes;
-    //         setCurrentRates(liveRates)
-    //         console.log(currentRates)
-    //     }
-    //     fetchDataAsync();
-    // },[])
+    useEffect(() => {
+        const fetchDataAsync = async () => {
+            let [data, liveData] = await fetchData();
+            const liveRates = liveData.data.quotes;
+            //const historicalRates = historicalData.data.quotes;
+            setCurrentRates(liveRates)
+            //console.log(currentRates)
+        }
+        const fetchHistoricalDataAsync = async () => {
+            let data = await fetchHistoricalData();
+            console.log("This should be historical data ", data);
+        }
+        fetchHistoricalDataAsync();
+        fetchDataAsync();
+    },[])
     const quotes = {
         "USDAED": 3.672902,
         "USDAFN": 72.501917,
@@ -185,25 +191,197 @@ export default function Table(){
         "USDZMW": 24.794768,
         "USDZWL": 321.999592
     }
-    const mappedHistoricalQuotes = Object.keys(quotes).map(key => {
-        return {
-            key: `${key.slice(3)}`,
-            value: mappedHistoricalQuotes[key]
-        }
-    });
+    const historicalQuotes = {
+        "USDAED": 3.672299,
+        "USDAFN": 72.500953,
+        "USDALL": 96.350336,
+        "USDAMD": 394.709774,
+        "USDANG": 1.80267,
+        "USDAOA": 838.000108,
+        "USDARS": 857.742059,
+        "USDAUD": 1.533296,
+        "USDAWG": 1.8,
+        "USDAZN": 1.701714,
+        "USDBAM": 1.807812,
+        "USDBBD": 2.019485,
+        "USDBDT": 109.773908,
+        "USDBGN": 1.806393,
+        "USDBHD": 0.376901,
+        "USDBIF": 2865,
+        "USDBMD": 1,
+        "USDBND": 1.348511,
+        "USDBOB": 6.911309,
+        "USDBRL": 4.991794,
+        "USDBSD": 1.000222,
+        "USDBTC": 0.00001439112,
+        "USDBTN": 83.358137,
+        "USDBWP": 13.710646,
+        "USDBYN": 3.272789,
+        "USDBYR": 19600,
+        "USDBZD": 2.016157,
+        "USDCAD": 1.35885,
+        "USDCDF": 2795.000186,
+        "USDCHF": 0.905704,
+        "USDCLF": 0.035512,
+        "USDCLP": 979.889928,
+        "USDCNY": 7.226795,
+        "USDCNH": 7.25861,
+        "USDCOP": 3848.13,
+        "USDCRC": 508.388409,
+        "USDCUC": 1,
+        "USDCUP": 26.5,
+        "USDCVE": 102.303327,
+        "USDCZK": 23.418099,
+        "USDDJF": 177.719975,
+        "USDDKK": 6.897635,
+        "USDDOP": 59.25019,
+        "USDDZD": 134.719242,
+        "USDEGP": 47.248499,
+        "USDERN": 15,
+        "USDETB": 56.874974,
+        "USDEUR": 0.924805,
+        "USDFJD": 2.2549,
+        "USDFKP": 0.791928,
+        "USDGBP": 0.79265,
+        "USDGEL": 2.709811,
+        "USDGGP": 0.791928,
+        "USDGHS": 13.193234,
+        "USDGIP": 0.791928,
+        "USDGMD": 67.924985,
+        "USDGNF": 8600.000096,
+        "USDGTQ": 7.799675,
+        "USDGYD": 209.261912,
+        "USDHKD": 7.82355,
+        "USDHNL": 24.780099,
+        "USDHRK": 6.882375,
+        "USDHTG": 132.604958,
+        "USDHUF": 365.220438,
+        "USDIDR": 15884,
+        "USDILS": 3.676705,
+        "USDIMP": 0.791928,
+        "USDINR": 83.36525,
+        "USDIQD": 1310,
+        "USDIRR": 42035.000124,
+        "USDISK": 139.000104,
+        "USDJEP": 0.791928,
+        "USDJMD": 153.921523,
+        "USDJOD": 0.708902,
+        "USDJPY": 151.293498,
+        "USDKES": 132.502829,
+        "USDKGS": 89.509949,
+        "USDKHR": 4045.000227,
+        "USDKMF": 455.049996,
+        "USDKPW": 899.925559,
+        "USDKRW": 1350.524979,
+        "USDKWD": 0.30765,
+        "USDKYD": 0.833564,
+        "USDKZT": 450.224613,
+        "USDLAK": 20947.502428,
+        "USDLBP": 89700.000166,
+        "USDLKR": 300.903999,
+        "USDLRD": 192.749434,
+        "USDLSL": 18.885023,
+        "USDLTL": 2.95274,
+        "USDLVL": 0.60489,
+        "USDLYD": 4.825025,
+        "USDMAD": 10.141501,
+        "USDMDL": 17.699311,
+        "USDMGA": 4391.501874,
+        "USDMKD": 56.887709,
+        "USDMMK": 2100.456621,
+        "USDMNT": 3403.702206,
+        "USDMOP": 8.05999,
+        "USDMRU": 40.049646,
+        "USDMUR": 46.289704,
+        "USDMVR": 15.460287,
+        "USDMWK": 1742.000423,
+        "USDMXN": 16.565703,
+        "USDMYR": 4.732987,
+        "USDMZN": 63.499964,
+        "USDNAD": 18.88994,
+        "USDNGN": 1418.570596,
+        "USDNIO": 36.849756,
+        "USDNOK": 10.803305,
+        "USDNPR": 133.373388,
+        "USDNZD": 1.668905,
+        "USDOMR": 0.38495,
+        "USDPAB": 1.000222,
+        "USDPEN": 3.736425,
+        "USDPGK": 3.832063,
+        "USDPHP": 56.279019,
+        "USDPKR": 277.949887,
+        "USDPLN": 3.99055,
+        "USDPYG": 7379.026667,
+        "USDQAR": 3.640499,
+        "USDRON": 4.598903,
+        "USDRSD": 108.317032,
+        "USDRUB": 92.450243,
+        "USDRWF": 1289,
+        "USDSAR": 3.750676,
+        "USDSBD": 8.465274,
+        "USDSCR": 13.550529,
+        "USDSDG": 601.000211,
+        "USDSEK": 10.64296,
+        "USDSGD": 1.34879,
+        "USDSHP": 1.263972,
+        "USDSLE": 22.596527,
+        "USDSLL": 22596.526609,
+        "USDSOS": 571.485115,
+        "USDSRD": 34.852977,
+        "USDSTD": 20697.981008,
+        "USDSVC": 8.751594,
+        "USDSYP": 13001.853422,
+        "USDSZL": 18.88979,
+        "USDTHB": 36.410086,
+        "USDTJS": 10.942266,
+        "USDTMT": 3.5,
+        "USDTND": 3.122984,
+        "USDTOP": 2.37745,
+        "USDTRY": 32.304703,
+        "USDTTD": 6.802237,
+        "USDTWD": 31.9944,
+        "USDTZS": 2557.496888,
+        "USDUAH": 39.283271,
+        "USDUGX": 3885.900209,
+        "USDUYU": 37.823748,
+        "USDUZS": 12625.000237,
+        "USDVEF": 3628387.38319,
+        "USDVES": 36.28861,
+        "USDVND": 24795,
+        "USDVUV": 120.675453,
+        "USDWST": 2.766241,
+        "USDXAF": 606.323369,
+        "USDXAG": 0.040707,
+        "USDXAU": 0.000456,
+        "USDXCD": 2.70255,
+        "USDXDR": 0.755273,
+        "USDXOF": 604.505548,
+        "USDXPF": 110.550116,
+        "USDYER": 250.349764,
+        "USDZAR": 18.93365,
+        "USDZMK": 9001.202446,
+        "USDZMW": 25.230855,
+        "USDZWL": 321.999592
+      }
+    // const mappedHistoricalQuotes = Object.keys(historicalQuotes).map(key => {
+    //     return {
+    //         key: `${key.slice(3)}`,
+    //         value: historicalQuotes[key]
+    //     }
+    // });
 
-    const mappedQuotes = Object.keys(quotes).map(key => {
-        return {
-            key: `${key.slice(3)}`,
-            value: quotes[key]
-        };
-        });
+    // const mappedQuotes = Object.keys(quotes).map(key => {
+    //     return {
+    //         key: `${key.slice(3)}`,
+    //         value: quotes[key]
+    //     };
+    //     });
     
     const mergedQuotes = Object.keys(quotes).map(key => {
         return {
             key: key.slice(3),
             liveRate: quotes[key],
-            historicalRate: mappedHistoricalQuotes[key]  // Assuming mappedHistoricalQuotes contains the historical rates for each key
+            historicalRate: historicalQuotes[key]  // Assuming mappedHistoricalQuotes contains the historical rates for each key
         };
     });
         
@@ -211,8 +389,8 @@ export default function Table(){
     const [source, setSource] = useState("USD");
     return (
         <>
-        {console.log(currentRates)}
-        {console.log(mappedQuotes)}
+        {/* {console.log(currentRates)} */}
+        {/* {console.log(mappedQuotes)} */}
         <div className="tableDiv">
             <table className="table table-rounded table-striped table-hover table-bordered caption-top">
                 <caption>
@@ -226,11 +404,24 @@ export default function Table(){
                     </tr>
                 </thead>
                 <tbody>
-                    {mappedQuotes.map((quote, index) => {
+                    {mergedQuotes.map((quote, index) => {
                         return(
                             <tr key={index}>
                                 <td>{quote.key}</td>
-                                <td>{quote.value}</td>
+                                <td>{quote.liveRate}</td>
+                                <td>{quote.historicalRate}</td>
+                                <td>
+                                    <table>
+                                        <tbody>
+                                            <tr>
+                                                <td>One</td>
+                                                <td>Two</td>
+                                                <td>Three</td>
+                                            </tr>
+                                        </tbody>
+
+                                    </table>
+                                </td>
                             </tr>
                         )
                     })}
