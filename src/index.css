@@ -22,14 +22,6 @@ a:hover {
   color: #535bf2;
 }
 
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
@@ -65,4 +57,40 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+body{
+  width: 100%;
+}
+.body{
+  display: flex;
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.index{
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: left;
+  /* text-align: center; */
+  width: 20vw;
+}
+
+.table{
+  table-layout: auto;
+  width: 100%;
+  caption-side: top;
+  border: 1px solid black;
+  border-radius: 0.5rem;
+}
+.tableDiv{
+  width: 100%;
+}
+caption{
+  text-align: center;
+}
+.currencyRow{
+  padding: 0.5rem;
 }
