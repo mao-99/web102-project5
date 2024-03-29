@@ -1,10 +1,14 @@
-import RenderData from './components/renderData'
+import Index from './components';
+import Table from './components/table';
 import './App.css'
 
 function App() {
   return (
     <>
-    <RenderData/>
+    <div className='body'>
+      <Index />
+      <Table />
+    </div>
     </>
   )
 }
