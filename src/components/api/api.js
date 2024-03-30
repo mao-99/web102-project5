@@ -46,27 +46,29 @@ export function generateDates(number) {
     return allDates;
 }
 
-const URL = `http://api.exchangerate.host/list?access_key=${apiKey}`;
-const liveURL = `http://api.exchangerate.host/live?access_key=${apiKey}`
-const historicalURL = `http://api.exchangerate.host/historical?access_key=${apiKey}&date=${DATE}`;
+//const URL = `http://api.exchangerate.host/list?access_key=${apiKey}`;
+//const liveURL = `http://api.exchangerate.host/live?access_key=${apiKey}&source=${}`
+//const historicalURL = `http://api.exchangerate.host/historical?access_key=${apiKey}&date=${DATE}`;
 let historicalResponses = [];
 
-export async function fetchHistoricalData(){
-    const promises = generateDates(3).map(async (date, index) =>{
+export async function fetchHistoricalData(curr, timeFrame){
+    const promises = generateDates(timeFrame).map(async (date, index) =>{
         const historicalURL = `http://api.exchangerate.host/historical?access_key=${apiKey}&date=${date}`;
         const historicalResponse = await axios.get(historicalURL);
+        console.log(historicalResponse);
         //historicalResponses.push(historicalResponse.data.quotes);
         return historicalResponse.data.quotes;
     })
     return Promise.all(promises);
 }
 
-export async function fetchData(){
-    const response = await axios.get(URL);
+export async function fetchData(curr){
+    //const response = await axios.get(URL);
+    const liveURL = `http://api.exchangerate.host/live?access_key=${apiKey}`;
     const liveResponse = await axios.get(liveURL);
     //const historicalResponse = await axios.get(historicalURL);
     // const historicalResponses = [];
 
     //console.log(response)
-    return [response, liveResponse];
+    return [liveResponse];
 }
