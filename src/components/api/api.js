@@ -51,18 +51,18 @@ export function generateDates(number) {
 //const historicalURL = `http://api.exchangerate.host/historical?access_key=${apiKey}&date=${DATE}`;
 let historicalResponses = [];
 
-export async function fetchHistoricalData(curr, timeFrame){
+export async function fetchHistoricalData(timeFrame){
     const promises = generateDates(timeFrame).map(async (date, index) =>{
         const historicalURL = `http://api.exchangerate.host/historical?access_key=${apiKey}&date=${date}`;
         const historicalResponse = await axios.get(historicalURL);
-        console.log(historicalResponse);
+        //console.log(historicalResponse);
         //historicalResponses.push(historicalResponse.data.quotes);
         return historicalResponse.data.quotes;
     })
     return Promise.all(promises);
 }
 
-export async function fetchData(curr){
+export async function fetchData(){
     //const response = await axios.get(URL);
     const liveURL = `http://api.exchangerate.host/live?access_key=${apiKey}`;
     const liveResponse = await axios.get(liveURL);

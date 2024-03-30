@@ -1,9 +1,10 @@
 import { fetchData, generateDates, fetchHistoricalData } from "./api/api";
+import styles from "./table.module.css"
 import axios from "axios";
 import { useState, useEffect } from "react";
-export default function Table({historicalQuotes, quotes, groupedRates, baseCurrency}){
+export default function Table({historicalQuotes, quotes, groupedRates, setTimeFrame, setQuotes, mergedQuotes}){
     //console.log(generateDates(3));
-    const [currentRates, setCurrentRates] = useState([])
+    // const [currentRates, setCurrentRates] = useState([])
     // useEffect(() => {
     //     const fetchDataAsync = async () => {
     //         let [data, liveData] = await fetchData();
@@ -20,15 +21,25 @@ export default function Table({historicalQuotes, quotes, groupedRates, baseCurre
     //     fetchDataAsync();
     // },[])
 
-    historicalQuotes.forEach(rateObj => {
-        Object.entries(rateObj).forEach(([key, value]) => {
-          if (!groupedRates[key]) {
-            groupedRates[key] = [];
-          }
-          groupedRates[key].push(value);
-        });
-      });
-
+    // historicalQuotes.forEach(rateObj => {
+    //     Object.entries(rateObj).forEach(([key, value]) => {
+    //       if (!groupedRates[key]) {
+    //         groupedRates[key] = [];
+    //       }
+    //       groupedRates[key].push(value);
+    //     });
+    //   });
+    const [formData, setFormData] = useState({searchCurrency: ''});
+    const handleChange = (e) => {
+        const {name, value} = e.target;
+        setFormData({...formData, [name]: value});
+    }
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        console.log(formData);
+        const searchedCurrency = formData.searchCurrency.toUpperCase;
+        //setMergedQuotes(mergedQuotes.filter(quote => quote.key === searchedCurrency ))
+    }
     const maxValues = {};
     for (const currency in groupedRates) {
         maxValues[currency] = Math.max(...groupedRates[currency]).toFixed(2);
@@ -60,32 +71,46 @@ export default function Table({historicalQuotes, quotes, groupedRates, baseCurre
     //         key: `${key.slice(3)}`,
     //         value: quotes[key]
     //     };
-    //     });
-    
-    const mergedQuotes = Object.keys(quotes).map(key => {
-        return {
-            key: key.slice(3),
-            liveRate: quotes[key],
-            historicalRate: historicalQuotes[key]  // Assuming mappedHistoricalQuotes contains the historical rates for each key
-        };
-    });
-        
+    //     });  
     
     //const [source, setSource] = useState("USD");
     return (
         <>
         {/* {console.log(currentRates)} */}
         {/* {console.log(mappedQuotes)} */}
-        {console.log(groupedRates)}
+        {/* {console.log(groupedRates)} */}
         <div className="tableDiv">
+            <div className={`${styles.currencies}`}>
+                <div className={`${styles.currency}`} onClick={() => {setTimeFrame(1)}}>
+                    <p>1 day</p>
+                </div>
+                <div className={`${styles.currency}`} onClick={() => {setTimeFrame(2)}}>
+                    <p>2 days</p>
+                </div>
+                <div className={`${styles.currency}`} onClick={() => {setTimeFrame(3)}}>
+                    <p>3 days</p>
+                </div>
+                <div className={`${styles.currency}`} onClick={() => {setTimeFrame(5)}}>
+                    <p>5 days</p>
+                </div>
+                <div className={`${styles.currency}`} onClick={() => {setTimeFrame(7)}}>
+                    <p>7 days</p>
+                </div>
+            </div>
+            <div>
+                <form onSubmit={handleSubmit}>
+                    <input type="text" name="searchCurrency" id="searchCurrency" value={formData.searchCurrency} onChange={handleChange}/>
+                    <input type="submit" value="Search" />
+                </form>
+            </div>
             <table className="table table-rounded table-striped table-hover table-bordered caption-top">
                 <caption>
-                    The price tells us how much of the other currency 1 {baseCurrency} is worth
+                    The price tells us how much of the other currency 1 USD is worth
                 </caption>
                 <thead className="table-dark table-group-divider">
                     <tr>
                         <th>Currency</th>
-                        <th>Live Rate <em>(1 {baseCurrency} equals...)</em></th>
+                        <th>Live Rate <em>(1 USD equals...)</em></th>
                         <th>Historical Rates
                             <table style={{width:'100%'}}><thead><tr><th>Max</th><th>Average</th><th>Min</th></tr></thead></table>
                         </th>
