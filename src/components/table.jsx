@@ -2,51 +2,88 @@ import { fetchData, generateDates, fetchHistoricalData } from "./api/api";
 import styles from "./table.module.css"
 import axios from "axios";
 import { useState, useEffect } from "react";
-export default function Table({historicalQuotes, quotes, groupedRates, setTimeFrame, setQuotes, mergedQuotes}){
-    //console.log(generateDates(3));
-    // const [currentRates, setCurrentRates] = useState([])
-    // useEffect(() => {
-    //     const fetchDataAsync = async () => {
-    //         let [data, liveData] = await fetchData();
-    //         const liveRates = liveData.data.quotes;
-    //         //const historicalRates = historicalData.data.quotes;
-    //         setCurrentRates(liveRates)
-    //         //console.log(currentRates)
-    //     }
-    //     const fetchHistoricalDataAsync = async () => {
-    //         let data = await fetchHistoricalData();
-    //         console.log("This should be historical data ", data);
-    //     }
-    //     fetchHistoricalDataAsync();
-    //     fetchDataAsync();
-    // },[])
+export default function Table(){
+    const [timeFrame, setTimeFrame] = useState(7);
+    const [quotes, setQuotes] = useState({});
+    const [tempQuotes, setTempQuotes] = useState({});
+    const [historicalQuotes, setHistoricalQuotes] = useState([]);
+    const [groupedQuotes, setGroupedQuotes] = useState({});
+    useEffect(() => {
+        const fetchDataAsync = async () => {
+            //This pulls the live rates from api and returns an object of price pairs (strings) and the rates (floats). It takes no parameters: output => {currencyPair1:rate, currencyPair2:rate, ...}
+            let [liveData] = await fetchData();
+            const liveRates = liveData.data.quotes;
+            return liveRates;
+        }
+        const fetchHistoricalDataAsync = async () => {
+            // This pulls the historical rates from api based on the time frame passed. It returns an array of objects of price pairs (strings) and the rates (floats). 
+            // It takes a parameter, an integer n which it uses to compute the past n dates and queries the api for each date's rates
+            // output => [{currencyPair1:rate, currencyPair2:rate, ....},{currencyPair1:rate, currencyPair2:rate, ....},{currencyPair1:rate, currencyPair2:rate, ....}]
+            let data = await fetchHistoricalData(timeFrame);
+            return data;
+        }
+        const updateQuotesAndHistorical = async () => {
+            //This function is used to update the state variables; quotes, historicalQuotes, and groupedQuotes after getting the data from the api.
+            const q = await fetchDataAsync();
+            const hQ = await fetchHistoricalDataAsync();
+            setQuotes(q);
+            setTempQuotes(q);
+            setHistoricalQuotes(hQ);
 
-    // historicalQuotes.forEach(rateObj => {
-    //     Object.entries(rateObj).forEach(([key, value]) => {
-    //       if (!groupedRates[key]) {
-    //         groupedRates[key] = [];
-    //       }
-    //       groupedRates[key].push(value);
-    //     });
-    //   });
+            const updateGroupedQuotes = () => {
+                //This function is used to group the values of each corresponding currency pair from historicalQuotes. It returns an object of currency pairs and
+                // an array of the rates associated with the pair. It takes no parameters. 
+                //output => {currencyPair1:[rate1, rate2, ...], currencyPair2:[rate1, rate2, ...], ...}
+                let updatedGroupedQuotes = {};
+    
+                hQ.forEach(rateObj => {
+                    Object.keys(rateObj).forEach(currencyPair => {
+                        if (updatedGroupedQuotes[currencyPair]){
+                            updatedGroupedQuotes[currencyPair].push(rateObj[currencyPair]);
+                        }
+                        else{
+                            updatedGroupedQuotes[currencyPair] = [rateObj[currencyPair]];
+                        }
+                    })
+                })
+                setGroupedQuotes(updatedGroupedQuotes);
+            }
+            updateGroupedQuotes();
+        }
+        updateQuotesAndHistorical();
+    },[timeFrame])
     const [formData, setFormData] = useState({searchCurrency: ''});
+    
     const handleChange = (e) => {
         const {name, value} = e.target;
         setFormData({...formData, [name]: value});
+        console.log(formData);
     }
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(formData);
-        const searchedCurrency = formData.searchCurrency.toUpperCase;
-        //setMergedQuotes(mergedQuotes.filter(quote => quote.key === searchedCurrency ))
+        //console.log(formData);
+
+        if (formData.searchCurrency !== ''){
+            const searchedCurrency = formData.searchCurrency.toUpperCase();
+            console.log("This is the search data: ", searchedCurrency);
+            let filteredQuotes = Object.entries(quotes).filter(([key, value]) => key === "USD" + searchedCurrency);
+            let newQuotes = Object.fromEntries(filteredQuotes);
+            setQuotes(newQuotes);
+        }
+        else{
+            setQuotes(tempQuotes);
+        }
     }
+    //console.log("These are the quotes outside useEffect: ", quotes);
+    //console.log("These are the historical quotes outside useEffect: ", historicalQuotes);
+    //console.log("These should be the grouped quotes outside useEffect: ", groupedQuotes);
     const maxValues = {};
-    for (const currency in groupedRates) {
-        maxValues[currency] = Math.max(...groupedRates[currency]).toFixed(2);
+    for (const currency in groupedQuotes) {
+        maxValues[currency] = Math.max(...groupedQuotes[currency]).toFixed(2);
     }
     const minValues = {};
-    for (const currency in groupedRates) {
-        minValues[currency] = Math.min(...groupedRates[currency]).toFixed(2);
+    for (const currency in groupedQuotes) {
+        minValues[currency] = Math.min(...groupedQuotes[currency]).toFixed(2);
     }
     const averageValues = {};
     function average(arr) {
@@ -56,29 +93,24 @@ export default function Table({historicalQuotes, quotes, groupedRates, setTimeFr
         const sum = arr.reduce((acc, val) => acc + val, 0);
         return (sum / arr.length).toFixed(2);
       }
-    for (const currency in groupedRates){
-        averageValues[currency] = average(groupedRates[currency]);
+    for (const currency in groupedQuotes){
+        averageValues[currency] = average(groupedQuotes[currency]);
     }
-    // const mappedHistoricalQuotes = Object.keys(historicalQuotes).map(key => {
-    //     return {
-    //         key: `${key.slice(3)}`,
-    //         value: historicalQuotes[key]
-    //     }
-    // });
-
-    // const mappedQuotes = Object.keys(quotes).map(key => {
-    //     return {
-    //         key: `${key.slice(3)}`,
-    //         value: quotes[key]
-    //     };
-    //     });  
+    const maxPair = Object.entries(quotes).reduce((max, [currency, rate]) => {
+        if (!max || parseFloat(rate) > parseFloat(max[1])) {
+            return [currency, parseFloat(rate).toFixed(2)];
+        }
+        return max;
+    }, null);
     
-    //const [source, setSource] = useState("USD");
+    const minPair = Object.entries(quotes).reduce((min, [currency, rate]) => {
+        if (!min || parseFloat(rate) < parseFloat(min[1])) {
+            return [currency, parseFloat(rate).toFixed(2)];
+        }
+        return min;
+    }, null);
     return (
         <>
-        {/* {console.log(currentRates)} */}
-        {/* {console.log(mappedQuotes)} */}
-        {/* {console.log(groupedRates)} */}
         <div className="tableDiv">
             <div className={`${styles.currencies}`}>
                 <div className={`${styles.currency}`} onClick={() => {setTimeFrame(1)}}>
@@ -105,7 +137,10 @@ export default function Table({historicalQuotes, quotes, groupedRates, setTimeFr
             </div>
             <table className="table table-rounded table-striped table-hover table-bordered caption-top">
                 <caption>
-                    The price tells us how much of the other currency 1 USD is worth
+                    The <strong><em>live rate</em></strong> tells us how much of the other currency 1 <strong><em>USD</em></strong> is worth <br/>
+                    <strong>Total # of Quotes :</strong> {Object.keys(quotes).length}  <br/>
+                    <strong>Max Pair :</strong> {maxPair && `${maxPair[0]}: ${maxPair[1]}`} <br/>
+                    <strong>Min Pair :</strong> {minPair && `${minPair[0]}: ${minPair[1]}`}
                 </caption>
                 <thead className="table-dark table-group-divider">
                     <tr>
@@ -117,27 +152,27 @@ export default function Table({historicalQuotes, quotes, groupedRates, setTimeFr
                     </tr>
                 </thead>
                 <tbody>
-                    {mergedQuotes.map((quote, index) => {
-                        return(
-                            <tr key={index}>
-                                <td>{quote.key}</td>
-                                <td>{quote.liveRate}</td>
-                                {/* <td>{quote.historicalRate}</td> */}
-                                <td>
+                    {
+                        Object.entries(quotes).map(([key, value], index) => {
+                            return (
+                                <tr key={index}>
+                                  <td>{key.slice(3)}</td>
+                                  <td>{value}</td>
+                                  <td>
                                     <table className='table-bordered table-hover' style={{width:'100%'}}>
                                         <tbody>
                                             <tr>
-                                                <td>{maxValues['USD' + quote.key]}</td>
-                                                <td>{averageValues['USD' + quote.key]}</td>
-                                                <td>{minValues['USD' + quote.key]}</td>
+                                                <td>{maxValues[key]}</td>
+                                                <td>{averageValues[key]}</td>
+                                                <td>{minValues[key]}</td>
                                             </tr>
                                         </tbody>
-
                                     </table>
-                                </td>
-                            </tr>
-                        )
-                    })}
+                                    </td> 
+                                </tr>
+                            )
+                        })
+                    }
                 </tbody>
             </table>
         </div>
